@@ -3,7 +3,7 @@ session_start();
 
 // Cek apakah pengguna sudah login
 if (isset($_SESSION['id_admin'])) {
-    header("Location: admin.php");
+    header("Location: dashboard.php");
     exit();
 }
 
@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['username'] = $user['username'];
         $_SESSION['name'] = $user['name'];
 
-        header("Location: admin.php");
+        header("Location: dashboard.php");
         exit();
     } else {
         $error_message = "Username or password is incorrect.";
