@@ -86,7 +86,7 @@ if ($categoriesResult && $categoriesResult->num_rows > 0) {
 
         <!-- Main Section Start -->
         <div class="container-fluid px-5 pt-5">
-            <a href="#" class="d-inline-block fs-5 text-decoration-none bg-success bg-opacity-75 text-white rounded-4 px-5 py-2 mb-3">Input Category</a>
+            <a href="./create-category.php" class="d-inline-block fs-5 text-decoration-none bg-success bg-opacity-75 text-white rounded-4 px-5 py-2 mb-3">Input Category</a>
 
             <table style="width: 100%;">
                 <tr>
