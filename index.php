@@ -19,9 +19,8 @@ if (!empty($searchQuery)) {
 // Add category filter if a category is selected
 if (!empty($categoryFilter)) {
     // Assuming the category name is stored in the 'category_name' column
-    $sqlArticle .= " WHERE id_category IN (SELECT id_category FROM category WHERE category_name = '$categoryFilter')";
+    $sqlArticle .= " AND id_category IN (SELECT id_category FROM category WHERE category_name = '$categoryFilter')";
 }
-
 
 $resultArticle = $conn->query($sqlArticle);
 
@@ -38,7 +37,6 @@ if ($resultCategories->num_rows > 0) {
     }
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -63,21 +61,27 @@ if ($resultCategories->num_rows > 0) {
         .list-category:hover {
             background-color: rgb(206, 212, 218);
         }
+
+        .truncate-lines-2 {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            -webkit-line-clamp: 2;
+            /* Number of lines to show */
+            text-overflow: ellipsis;
+        }
     </style>
 </head>
 
 <body>
     <!-- Section Navbar Start -->
-    <nav class="navbar navbar-expand-lg bg-dark border-bottom border-body" data-bs-theme="dark">
+    <nav class="navbar navbar-expand-xxl bg-dark border-bottom border-body" data-bs-theme="dark">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="#">
+            <a href="index.php" class="navbar-brand d-flex align-items-center" href="#">
                 <img src="./src/image/logo-magz.svg" alt="logo" style="width: 50px;">
-                <span class="fs-4 fw-bold">ArfinMagz</span>
+                <span class="fs-4 fw-bold ms-2">ArfinMagz</span>
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <div class="d-none d-sm-block">
                 <form class="d-flex ms-auto" role="search" method="GET">
                     <div class="d-flex border border-2 py-1 ps-2 pe-0">
                         <img src="./src//image/icon-search.svg" alt="" style="width: 20px; filter: invert(85%) sepia(100%) saturate(19%) hue-rotate(303deg) brightness(105%) contrast(104%);">
@@ -93,63 +97,52 @@ if ($resultCategories->num_rows > 0) {
     <!-- Main Section Start -->
     <section class="container mt-4">
         <div class="row">
-            <div class="col-8">
-
+            <!-- Article Section Start -->
+            <div class="col-9">
                 <?php
-                // Periksa apakah query berhasil dijalankan
                 if ($resultArticle->num_rows > 0) {
-                    // Output data dari setiap baris
                     while ($article = $resultArticle->fetch_assoc()) {
-                        // Fetch admin data for the article
                         $sqlAdmin = "SELECT * FROM admin WHERE id_admin = " . $article['id_admin'];
                         $resultAdmin = $conn->query($sqlAdmin);
                         $admin = $resultAdmin->fetch_assoc();
-
-                        // Fetch category data for the article
                         $sqlCategory = "SELECT * FROM category WHERE id_category = " . $article['id_category'];
                         $resultCategory = $conn->query($sqlCategory);
                         $category = $resultCategory->fetch_assoc();
-
                         if ($article["status"]) {
                 ?>
-                            <!-- Article Section Start -->
-                            <div class="d-flex border border-2 border-light-subtle" style="height: 12rem;">
+                            <div class="d-flex border border-2 border-light-subtle mb-3" style="height: 12rem;">
                                 <img src="./src/image/<?php echo $article['image']; ?>" alt="image-news" class="col-4 object-fit-cover">
                                 <div class="col-8 ps-3 py-3">
                                     <h1 class="m-0 p-0" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?php echo $article['title']; ?></h1>
-                                    <!-- Truncate content to 150 characters -->
-                                    <?php
-                                    $truncatedContent = (strlen($article['content']) > 150) ? substr($article['content'], 0, 150) . '...' : $article['content'];
-                                    ?>
-                                    <p class="m-0 pt-1"><?php echo $truncatedContent; ?></p>
+                                    <p class="m-0 pt-1 truncate-lines-2"><?php echo $article['content'] ?></p>
                                     <div class="d-flex align-items-center m-0 pt-4 pe-3">
                                         <p class="text-body-tertiary fw-semibold m-0 p-0">
-                                            <span class="text-dark fw-bold"><?php echo $admin['name']; ?></span> <a href="#" class="text-primary text-decoration-none mx-3"><?php echo $category['category_name']; ?></a> <?php echo $article['publish_date']; ?>
+                                            <span class="text-dark fw-bold"><?php echo $admin['name']; ?></span>
+                                            <a href="#" class="text-primary text-decoration-none mx-3"><?php echo $category['category_name']; ?></a>
+                                            <?php
+                                            setlocale(LC_TIME, 'id_ID');
+                                            $publishDate = new DateTime($article['publish_date']);
+                                            echo strftime('%e %B %Y', $publishDate->getTimestamp());
+                                            ?>
                                         </p>
                                         <a href="#" class="text-decoration-none text-white bg-primary rounded-1 py-1 px-3 ms-auto">Lihat Selengkapnya</a>
                                     </div>
                                 </div>
                             </div>
-                            <!-- Article Section end -->
                         <?php
                         } else {
                         ?>
                             <div class="border border-2 border-light-subtle text-center">
                                 <h1 class="fs-3 m-0 py-3">There are currently no articles to display.</h1>
                             </div>
-                    <?php
+                <?php
                         }
                     }
-                } else {
-                    ?>
-                    <div class="border border-2 border-light-subtle text-center">
-                        <h1 class="fs-3 m-0 py-3">No articles found.</h1>
-                    </div>
-                <?php
                 }
                 ?>
-
             </div>
+            <!-- Article Section End -->
+
 
             <!-- List Category Section Start -->
             <div class="col-3">
