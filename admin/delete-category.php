@@ -30,9 +30,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
     $delete_query = "DELETE FROM category WHERE id_category = $category_id";
 
     if ($conn->query($delete_query) === TRUE) {
-        echo "Category successfully deleted!";
+        // Redirect to manage-category.php after successful deletion
+        header("Location: manage-category.php");
+        exit();
     } else {
-        echo "Error deleting category: " . $conn->error;
+        header("Location: manage-category.php");
+        exit();
     }
 } else {
     echo "Invalid request.";
