@@ -26,7 +26,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
         $delete_query = "DELETE FROM article WHERE id = $article_id";
 
         if ($conn->query($delete_query) === TRUE) {
-            echo "Article successfully deleted!";
+            // Redirect to manage-category.php after successful deletion
+            header("Location: manage-article.php");
+            exit();
         } else {
             echo "Error deleting article: " . $conn->error;
         }
