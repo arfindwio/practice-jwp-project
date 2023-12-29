@@ -1,101 +1,176 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['id_admin'])) {
+require_once('config.php');
+
+function redirectToLogin()
+{
     header("Location: login.php");
     exit();
 }
 
-require_once('config.php');
-
-function clean_input($data)
+function cleanInput($conn, $data)
 {
-    global $conn;
     return htmlspecialchars(stripslashes(trim($conn->real_escape_string($data))));
 }
 
-$article_id = null;
+function getCategories($conn)
+{
+    $categories = [];
+    $categoryQuery = "SELECT * FROM category";
+    $categoryResult = $conn->query($categoryQuery);
 
-if (isset($_GET['id'])) {
-    $article_id = clean_input($_GET['id']);
+    if ($categoryResult->num_rows > 0) {
+        while ($category = $categoryResult->fetch_assoc()) {
+            $categories[] = $category;
+        }
+    }
 
-    $select_query = "SELECT * FROM article WHERE id = $article_id AND id_admin = {$_SESSION['id_admin']}";
-    $result = $conn->query($select_query);
+    return $categories;
+}
 
-    if ($result->num_rows != 1) {
+function getArticleById($conn, $articleId)
+{
+    $articleQuery = "SELECT * FROM article WHERE id = ?";
+    $stmt = $conn->prepare($articleQuery);
+    $stmt->bind_param("i", $articleId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        return $result->fetch_assoc();
+    }
+
+    return null;
+}
+
+function updateArticle($conn, $articleId, $title, $content, $image, $categoryId, $status)
+{
+    // Check if status is false and set publish_date to null
+    $publishDate = ($status == 1) ? 'NOW()' : 'NULL';
+
+    $updateQuery = "UPDATE article SET title = ?, content = ?, image = ?, id_category = ?, status = ?, publish_date = $publishDate, updated_at = NOW() WHERE id = ?";
+    $stmt = $conn->prepare($updateQuery);
+    $stmt->bind_param("sssiii", $title, $content, $image, $categoryId, $status, $articleId);
+
+    if ($stmt->execute()) {
+        echo "Data Artikel berhasil diupdate!";
+    } else {
+        echo "Error: " . $stmt->error;
+    }
+
+    $stmt->close();
+}
+
+function uploadImage()
+{
+    $imageFileType = strtolower(pathinfo($_FILES["image"]["name"], PATHINFO_EXTENSION));
+    $hash = hash('sha256', uniqid(mt_rand(), true));
+    $targetFile = $hash . '.' . $imageFileType;
+
+    if (move_uploaded_file($_FILES["image"]["tmp_name"], "../src/image/" . $targetFile)) {
+        return $targetFile;
+    }
+
+    return null;
+}
+
+if (!isset($_SESSION['id_admin'])) {
+    redirectToLogin();
+}
+
+$articleData = null;
+
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    if (isset($_GET['id'])) {
+        $articleId = cleanInput($conn, $_GET['id']);
+        $articleData = getArticleById($conn, $articleId);
+    }
+
+    if ($articleData === null) {
         echo "Article not found.";
         exit();
     }
 
-    $article = $result->fetch_assoc();
+    // Display the HTML form only when $articleData is available
+?>
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Edit Article</title>
+    </head>
+
+    <body>
+        <h2>Edit Article</h2>
+
+        <form method="post" action="edit-article.php?id=<?php echo $articleData['id']; ?>" enctype="multipart/form-data">
+            <!-- Hidden input to store the article ID -->
+            <input type="hidden" name="article_id" value="<?php echo $articleData['id']; ?>">
+            <!-- Hidden input to store the existing image URL -->
+            <input type="hidden" name="existing_image" value="<?php echo $articleData['image']; ?>">
+
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" value="<?php echo $articleData['title']; ?>" required>
+
+            <br>
+
+            <label for="content">Content:</label>
+            <textarea id="content" name="content" required><?php echo $articleData['content']; ?></textarea>
+
+            <br>
+
+            <label for="image">Image File:</label>
+            <input type="file" id="image" name="image" accept="image/*">
+
+            <br>
+
+            <label for="category_id">Category</label>
+            <select name="category_id" id="category_id">
+                <option selected hidden>Choose Category</option>
+
+                <?php
+                $categories = getCategories($conn);
+                foreach ($categories as $category) {
+                    $selected = ($category['id_category'] == $articleData['id_category']) ? "selected" : "";
+                    echo "<option value={$category['id_category']} $selected>{$category['category_name']}</option>";
+                }
+                ?>
+            </select>
+
+            <br>
+
+            <label for="status">Status:</label>
+            <input type="checkbox" id="status" name="status" <?php echo ($articleData['status'] == 1) ? "checked" : ""; ?>>
+
+            <br>
+
+            <input type="submit" value="Update">
+        </form>
+    </body>
+
+    </html>
+<?php
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $title = clean_input($_POST['title']);
-    $content = clean_input($_POST['content']);
-    $image = clean_input($_POST['image']);
-    $category_id = clean_input($_POST['category_id']);
+    $articleId = cleanInput($conn, $_POST['article_id']);
+    $title = cleanInput($conn, $_POST['title']);
+    $content = cleanInput($conn, $_POST['content']);
+    $categoryId = cleanInput($conn, $_POST['category_id']);
     $status = isset($_POST['status']) ? 1 : 0;
 
-    $now = date('Y-m-d H:i:s');
-    $update_query = "UPDATE article SET title = '$title', content = '$content', image = '$image', status = $status, updated_at = '$now', id_category = $category_id ";
-
-    if ($status) {
-        $update_query .= ", publish_date = '$now' ";
+    // Check if a new image is uploaded
+    if (!empty($_FILES['image']['name'])) {
+        // If a new image is uploaded, use the uploaded image
+        $image = uploadImage();
     } else {
-        $update_query .= ", publish_date = NULL ";
+        // If no new image is uploaded, use the existing image URL
+        $image = cleanInput($conn, $_POST['existing_image']);
     }
 
-    $update_query .= "WHERE id = $article_id";
-
-    if ($conn->query($update_query) === TRUE) {
-        echo "Data Artikel berhasil diupdate!";
-    } else {
-        echo "Error: " . $update_query . "<br>" . $conn->error;
-    }
+    updateArticle($conn, $articleId, $title, $content, $image, $categoryId, $status);
 }
 ?>
-
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Article</title>
-</head>
-
-<body>
-    <h2>Edit Article</h2>
-
-    <form method="post" action="edit-article.php?id=<?php echo $article_id; ?>">
-        <label for="title">Title:</label>
-        <input type="text" id="title" name="title" value="<?php echo isset($article['title']) ? $article['title'] : ''; ?>" required>
-
-        <br>
-
-        <label for="content">Content:</label>
-        <textarea id="content" name="content" required><?php echo isset($article['content']) ? $article['content'] : ''; ?></textarea>
-
-        <br>
-
-        <label for="image">Image URL:</label>
-        <input type="text" id="image" name="image" value="<?php echo isset($article['image']) ? $article['image'] : ''; ?>">
-
-        <br>
-
-        <label for="category_id">Category ID:</label>
-        <input type="number" id="category_id" name="category_id" value="<?php echo isset($article['id_category']) ? $article['id_category'] : ''; ?>" required>
-
-        <br>
-
-        <label for="status">Status:</label>
-        <input type="checkbox" id="status" name="status" <?php echo isset($article['status']) && $article['status'] ? 'checked' : ''; ?>>
-
-        <br>
-
-        <input type="submit" value="Update">
-    </form>
-</body>
-
-</html>

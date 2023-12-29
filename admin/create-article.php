@@ -1,48 +1,88 @@
 <?php
 session_start();
 
-// Cek apakah pengguna sudah login
-if (!isset($_SESSION['id_admin'])) {
-    // Jika belum login, arahkan ke halaman login.php
+require_once('config.php');
+
+function redirectToLogin()
+{
     header("Location: login.php");
     exit();
 }
 
-// Sertakan file konfigurasi database
-require_once('config.php');
-
-// Fungsi untuk membersihkan input
-function clean_input($data)
+function cleanInput($conn, $data)
 {
-    global $conn; // Add this line to access the database connection
     return htmlspecialchars(stripslashes(trim($conn->real_escape_string($data))));
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Ambil data dari formulir input
-    $title = clean_input($_POST['title']);
-    $content = clean_input($_POST['content']);
-    $image = clean_input($_POST['image']); // Anda mungkin ingin menghandle upload file, sesuaikan sesuai kebutuhan
-    $category_id = clean_input($_POST['category_id']);
-    $status = isset($_POST['status']) ? 1 : 0; // Jika checkbox 'status' dicentang, beri nilai 1, jika tidak, beri nilai 0
-    $created_at = date('Y-m-d H:i:s'); // Waktu saat ini
+function getCategories($conn)
+{
+    $categories = [];
+    $categoryQuery = "SELECT * FROM category";
+    $categoryResult = $conn->query($categoryQuery);
 
-    // Lakukan operasi penambahan data ke tabel article
-    $insert_query = "INSERT INTO article (title, content, image, status, created_at, id_admin, id_category) 
-                     VALUES ('$title', '$content', '$image', $status, '$created_at', {$_SESSION['id_admin']}, $category_id)";
+    if ($categoryResult->num_rows > 0) {
+        while ($category = $categoryResult->fetch_assoc()) {
+            $categories[] = $category;
+        }
+    }
 
-    if ($conn->query($insert_query) === TRUE) {
+    return $categories;
+}
+
+function insertArticle($conn, $title, $content, $image, $categoryId, $status, $userId)
+{
+    $insertQuery = "INSERT INTO article (title, content, image, status, created_at, id_admin, id_category) 
+                     VALUES (?, ?, ?, ?, NOW(), ?, ?)";
+
+    $stmt = $conn->prepare($insertQuery);
+    $stmt->bind_param("sssiis", $title, $content, $image, $status, $userId, $categoryId);
+
+    if ($stmt->execute()) {
         if ($status) {
-            // Jika status true, tambahkan data pada publish_date
-            $article_id = $conn->insert_id; // Ambil ID artikel yang baru ditambahkan
-            $publish_date = date('Y-m-d H:i:s'); // Waktu saat ini
-            $update_query = "UPDATE article SET publish_date = '$publish_date' WHERE id = $article_id";
-            $conn->query($update_query);
+            $articleId = $stmt->insert_id;
+            $publishDate = date('Y-m-d H:i:s');
+            $updateQuery = "UPDATE article SET publish_date = ? WHERE id = ?";
+            $updateStmt = $conn->prepare($updateQuery);
+            $updateStmt->bind_param("si", $publishDate, $articleId);
+            $updateStmt->execute();
+            $updateStmt->close();
         }
         echo "Data Artikel berhasil ditambahkan!";
     } else {
-        echo "Error: " . $insert_query . "<br>" . $conn->error;
+        echo "Error: " . $stmt->error;
     }
+
+    $stmt->close();
+}
+
+function uploadImage()
+{
+    $imageFileType = strtolower(pathinfo($_FILES["image"]["name"], PATHINFO_EXTENSION));
+    $hash = hash('sha256', uniqid(mt_rand(), true));
+    $targetFile = $hash . '.' . $imageFileType;
+
+    if (move_uploaded_file($_FILES["image"]["tmp_name"], "../src/image/" . $targetFile)) {
+        return $targetFile;
+    }
+
+    return null;
+}
+
+
+if (!isset($_SESSION['id_admin'])) {
+    redirectToLogin();
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $title = cleanInput($conn, $_POST['title']);
+    $content = cleanInput($conn, $_POST['content']);
+    $categoryId = cleanInput($conn, $_POST['category_id']);
+    $status = isset($_POST['status']) ? 1 : 0;
+    $userId = $_SESSION['id_admin'];
+
+    $image = uploadImage();
+
+    insertArticle($conn, $title, $content, $image, $categoryId, $status, $userId);
 }
 ?>
 
@@ -58,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <h2>Input Article</h2>
 
-    <form method="post" action="create-article.php">
+    <form method="post" action="create-article.php" enctype="multipart/form-data">
         <label for="title">Title:</label>
         <input type="text" id="title" name="title" required>
 
@@ -69,13 +109,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <br>
 
-        <label for="image">Image URL:</label>
-        <input type="text" id="image" name="image">
+        <label for="image">Image File:</label>
+        <input type="file" id="image" name="image" accept="image/*">
 
         <br>
 
-        <label for="category_id">Category ID:</label>
-        <input type="number" id="category_id" name="category_id" required>
+        <label for="category_id">Category</label>
+        <select name="category_id" id="category_id">
+            <option selected hidden>Choose Category</option>
+
+            <?php
+            $categories = getCategories($conn);
+            foreach ($categories as $category) {
+                echo "<option value={$category['id_category']}>{$category['category_name']}</option>";
+            }
+            ?>
+        </select>
 
         <br>
 
