@@ -66,7 +66,7 @@ if ($categoriesResult && $categoriesResult->num_rows > 0) {
         <a href="manage-article.php" class="fs-5 d-block sidebar-hover text-white text-decoration-none py-3 px-5" style="width: 100%;">
             Manage Article
         </a>
-        <a href="manage-category.php" class="fs-5 d-block sidebar-hover sidebar-selected text-white text-decoration-none py-3 px-5" style="width: 100%;">
+        <a href="manage-category.php" class="fs-5 d-block sidebar-selected text-white text-decoration-none py-3 px-5" style="width: 100%;">
             Manage Category
         </a>
         <a href="logout.php" class="fs-5 d-block sidebar-hover text-white text-decoration-none py-3 px-5" style="width: 100%;">
@@ -86,7 +86,12 @@ if ($categoriesResult && $categoriesResult->num_rows > 0) {
 
         <!-- Main Section Start -->
         <div class="container-fluid px-5 pt-5">
-            <a href="./create-category.php" class="d-inline-block fs-5 text-decoration-none bg-success bg-opacity-75 text-white rounded-4 px-5 py-2 mb-3">Input Category</a>
+            <a href="./create-category.php" class="d-inline-block fs-5 text-decoration-none bg-success bg-opacity-75 text-white rounded-4 px-4 py-2 mb-3">
+                <div class="d-flex align-items-center justify-content-center">
+                    <img src="../src/image/icon-create.svg" alt="create data" class="p-1" style="width: 25px; filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(227deg) brightness(111%) contrast(101%);">
+                    <p class="p-0 m-0 ms-2">Input Category</p>
+                </div>
+            </a>
 
             <table style="width: 100%;">
                 <tr>
@@ -99,8 +104,16 @@ if ($categoriesResult && $categoriesResult->num_rows > 0) {
                         <td style="col-2"><?php echo $index + 1; ?></td>
                         <td class="col-8"><?php echo $category['category_name']; ?></td>
                         <td class="d-flex flex-nowrap">
-                            <a href="./edit-category.php?id=<?php echo $category['id_category'] ?>" class="fs-5 d-inline-block text-decoration-none text-white bg-warning bg-opacity-75 rounded-4 px-5 py-3 me-2">Edit</a>
-                            <div class="fs-5 d-inline-block text-decoration-none text-white bg-danger bg-opacity-75 rounded-4 px-5 py-3" data-bs-toggle="modal" data-bs-target="#deleteModal<?php echo $category['id_category']; ?>" style="cursor: pointer;">Delete</div>
+                            <a href="./edit-category.php?id=<?php echo $category['id_category'] ?>" class="fs-5 d-inline-block text-decoration-none text-white bg-warning bg-opacity-75 rounded-4 px-4 py-2 me-2">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <img src="../src/image/icon-edit.svg" alt="icon edit" class="p-1" style="width: 30px; filter: invert(100%) sepia(100%) saturate(0%) brightness(111%) contrast(101%);">
+                                    <p class="p-0 m-0 ms-1">Edit</p>
+                                </div>
+                            </a>
+                            <div class="fs-5 d-flex align-items-center justify-content-center text-decoration-none text-white bg-danger bg-opacity-75 rounded-4 px-4 py-2" data-bs-toggle="modal" data-bs-target="#deleteModal<?php echo $category['id_category']; ?>" style="cursor: pointer;">
+                                <img src="../src/image/icon-delete.svg" alt="icon delete" class="p-1" style="width: 30px; filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(227deg) brightness(111%) contrast(101%);">
+                                <p class="p-0 m-0 ms-1">Delete</p>
+                            </div>
                         </td>
                     </tr>
                 <?php endforeach; ?>

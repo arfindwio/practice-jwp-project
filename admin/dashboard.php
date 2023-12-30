@@ -58,7 +58,7 @@ if ($categoryCountResult) {
             <img src="../src/image/logo-magz.svg" alt="logo" style="width: 50px;">
             <span class="fs-2 fw-bold ms-2">ArfinMagz</span>
         </a>
-        <a href="dashboard.php" class="fs-5 d-block sidebar-hover sidebar-selected text-white text-decoration-none py-3 px-5 mt-5" style="width: 100%;">
+        <a href="dashboard.php" class="fs-5 d-block sidebar-selected text-white text-decoration-none py-3 px-5 mt-5" style="width: 100%;">
             Dashboard
         </a>
         <a href="manage-article.php" class="fs-5 d-block sidebar-hover text-white text-decoration-none py-3 px-5" style="width: 100%;">
