@@ -101,54 +101,120 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Edit Article</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+        <style>
+            .sidebar-hover:hover {
+                background-color: rgba(206, 212, 218, .3);
+
+            }
+
+            .sidebar-selected {
+                background-color: rgba(206, 212, 218, .7);
+
+            }
+
+            td,
+            th {
+                border: 1px solid #dddddd;
+                text-align: left;
+                padding: 8px;
+            }
+
+            tr:nth-child(even) {
+                background-color: #dddddd;
+            }
+        </style>
     </head>
 
     <body>
-        <h2>Edit Article</h2>
+        <!-- Sidebar Section Start -->
+        <div class="col-2 bg-dark" style="position: fixed;height: 100vh;">
+            <a href="index.php" class="d-flex justify-content-center align-items-center text-decoration-none text-white text-center py-4 p-0 m-0">
+                <img src="../src/image/logo-magz.svg" alt="logo" style="width: 50px;">
+                <span class="fs-2 fw-bold ms-2">ArfinMagz</span>
+            </a>
+            <a href="dashboard.php" class="fs-5 d-block sidebar-hover text-white text-decoration-none py-3 px-5 mt-5" style="width: 100%;">
+                Dashboard
+            </a>
+            <a href="manage-article.php" class="fs-5 d-block sidebar-selected text-white text-decoration-none py-3 px-5" style="width: 100%;">
+                Manage Article
+            </a>
+            <a href="manage-category.php" class="fs-5 d-block sidebar-hover text-white text-decoration-none py-3 px-5" style="width: 100%;">
+                Manage Category
+            </a>
+            <a href="logout.php" class="fs-5 d-block sidebar-hover text-white text-decoration-none py-3 px-5" style="width: 100%;">
+                Logout
+            </a>
+        </div>
+        <!-- Sidebar Section End -->
 
-        <form method="post" action="edit-article.php?id=<?php echo $articleData['id']; ?>" enctype="multipart/form-data">
-            <!-- Hidden input to store the article ID -->
-            <input type="hidden" name="article_id" value="<?php echo $articleData['id']; ?>">
-            <!-- Hidden input to store the existing image URL -->
-            <input type="hidden" name="existing_image" value="<?php echo $articleData['image']; ?>">
+        <div class="col-10 float-end">
+            <!-- Navbar Section Start -->
+            <nav class="bg-dark-subtle shadow-md">
+                <div class="container-fluid px-5 py-4">
+                    <p class="text-secondary fs-3 fw-bold p-0 py-1 m-0">Hi, <?php echo isset($_SESSION['name']) ? $_SESSION['name'] : 'Admin'; ?>!</p>
+                </div>
+            </nav>
+            <!-- Navbar Section Start -->
 
-            <label for="title">Title:</label>
-            <input type="text" id="title" name="title" value="<?php echo $articleData['title']; ?>" required>
+            <!-- Main Section Start -->
+            <div class="container-fluid px-5 pt-5">
+                <div class="border border-2 rounded-2 p-5 m-0">
+                    <h2 class="fs-2 mb-4">Edit Article</h2>
 
-            <br>
+                    <div>
+                        <form method="post" action="edit-article.php" action="edit-article.php?id=<?php echo $articleData['id']; ?>" enctype="multipart/form-data">
+                            <input type="hidden" name="article_id" value="<?php echo $articleData['id']; ?>">
 
-            <label for="content">Content:</label>
-            <textarea id="content" name="content" required><?php echo $articleData['content']; ?></textarea>
+                            <input type="hidden" name="existing_image" value="<?php echo $articleData['image']; ?>">
 
-            <br>
+                            <div class="d-flex flex-column mb-3">
+                                <label for="title" class="fs-4">Title:</label>
+                                <input type="text" id="title" name="title" class="form-control" style="width: 50%" placeholder="Input article title" value="<?php echo $articleData['title']; ?>" required>
+                            </div>
+                            <div class="d-flex flex-column mb-3">
+                                <label for="content" class="fs-4">Content:</label>
+                                <textarea id="content" name="content" class="form-control" style="width: 50%" placeholder="Input article content" required><?php echo $articleData['content']; ?></textarea>
+                            </div>
+                            <div class="d-flex flex-column mb-3">
+                                <label for="image" class="fs-4">Image</label>
+                                <input type="file" id="image" name="image" accept="image/*" class="form-control" style="width: 50%">
+                            </div>
+                            <div class="d-flex flex-column mb-3">
+                                <label for="category_id" class="fs-4">Category</label>
+                                <select name="category_id" id="category_id" class="form-select" style="width: 50%" aria-label="Default select example">
+                                    <option selected hidden>Choose Category</option>
 
-            <label for="image">Image File:</label>
-            <input type="file" id="image" name="image" accept="image/*">
+                                    <?php
+                                    $categories = getCategories($conn);
+                                    foreach ($categories as $category) {
+                                        $selected = ($category['id_category'] == $articleData['id_category']) ? "selected" : "";
+                                        echo "<option value={$category['id_category']} $selected>{$category['category_name']}</option>";
+                                    }
+                                    ?>
+                                </select>
+                            </div>
 
-            <br>
+                            <div class="d-flex flex-column mb-3">
+                                <label for="status" class="fs-4">Status:</label>
+                                <div class="d-flex align-items-center">
+                                    <p class="p-0 m-0 me-3 fs-5">Draft</p>
+                                    <div class="form-check form-switch d-flex">
+                                        <input type="checkbox" id="status" name="status" class="form-check-input" role="switch" id="flexSwitchCheckDefault" style="height: 30px; width: 60px" <?php echo ($articleData['status'] == 1) ? "checked" : ""; ?>>
+                                    </div>
+                                    <p class="p-0 m-0 ms-3 fs-5">Publish</p>
+                                </div>
+                            </div>
 
-            <label for="category_id">Category</label>
-            <select name="category_id" id="category_id">
-                <option selected hidden>Choose Category</option>
-
-                <?php
-                $categories = getCategories($conn);
-                foreach ($categories as $category) {
-                    $selected = ($category['id_category'] == $articleData['id_category']) ? "selected" : "";
-                    echo "<option value={$category['id_category']} $selected>{$category['category_name']}</option>";
-                }
-                ?>
-            </select>
-
-            <br>
-
-            <label for="status">Status:</label>
-            <input type="checkbox" id="status" name="status" <?php echo ($articleData['status'] == 1) ? "checked" : ""; ?>>
-
-            <br>
-
-            <input type="submit" value="Update">
-        </form>
+                            <input type="submit" value="Update" class="bg-primary text-white rounded-3 border border-1 border-white py-2 px-5">
+                        </form>
+                    </div>
+                    </form>
+                </div>
+            </div>
+            <!-- Main Section End -->
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
     </body>
 
     </html>
@@ -172,5 +238,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     updateArticle($conn, $articleId, $title, $content, $image, $categoryId, $status);
+    header("Location: manage-article.php");
+    exit();
 }
 ?>
