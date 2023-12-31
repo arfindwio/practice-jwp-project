@@ -120,6 +120,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <!-- Main Section Start -->
         <div class="container-fluid px-5 pt-5">
+
+            <!-- Breadcrumb Section Start -->
+            <div class="d-flex fs-5 mb-4">
+                <a href="manage-category.php" class="d-flex text-decoration-none text-secondary fw-bold p-0 m-0">
+                    <img src="../src/image/icon-home.svg" alt="icon home" style="width: 25px;">
+                    <p class="m-0 p-0 ms-2">Manage Category </p>
+                </a>
+                <p class="text-decoration-none text-secondary p-0 m-0 ms-2"><span class="fw-bold">></span> Input Category</p>
+            </div>
+            <!-- Breadcrumb Section End -->
+
             <div class="border border-2 rounded-2 p-5 m-0">
                 <h2 class="fs-2 mb-4">Input Category</h2>
 

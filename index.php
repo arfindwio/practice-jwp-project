@@ -135,6 +135,16 @@ if (!$resultArticle) {
 
     <!-- Main Section Start -->
     <section class="container mt-4">
+
+        <!-- Breadcrumb Section Start -->
+        <div class="d-flex fs-5 mb-4">
+            <div href="index.php" class="d-flex text-decoration-none text-secondary p-0 m-0">
+                <img src="./src/image/icon-home.svg" alt="icon home" style="width: 25px;">
+                <p class="m-0 p-0 ms-2">Home </p>
+            </div>
+        </div>
+        <!-- Breadcrumb Section End -->
+
         <div class="row">
             <!-- List Category Section Start -->
             <div class="col-12 mb-4 d-lg-none mb-lg-0">
@@ -160,16 +170,16 @@ if (!$resultArticle) {
                         if ($article["status"]) {
                 ?>
                             <div class="d-flex flex-column flex-lg-row border border-2 border-light-subtle rounded-2 shadow-md mb-3 py-3 px-4 p-lg-0 article-card">
-                                <div class="col-2 col-lg-3 mx-auto mx-lg-0">
-                                    <img src="./src/image/<?php echo $article['image']; ?>" alt="image-news" class="img-fluid">
+                                <div class="d-flex justify-content-center justify-content-lg-start col-2 col-lg-3 mb-3 mx-auto mb-lg-0 mx-lg-0">
+                                    <img src="./src/image/<?php echo $article['image']; ?>" alt="image-news" class="object-fit-cover">
                                 </div>
-                                <div class="col-12 p-0 m-0 col-lg-9 ps-lg-4 py-lg-4">
+                                <div class="col-12 p-0 m-0 col-lg-9 ps-lg-5 py-lg-2">
                                     <h1 class="m-0 p-0 mb-lg-3" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?php echo $article['title']; ?></h1>
                                     <p class="fs-5  truncate-lines-2 m-0 mb-3 mb-lg-0 pt-1"><?php echo $article['content'] ?></p>
                                     <div class="d-flex align-items-end m-0 p-0 pt-lg-4 pe-lg-3">
                                         <p class="text-body-tertiary fw-semibold m-0 p-0">
                                             <span class="text-dark fw-bold"><?php echo $admin['name']; ?></span>
-                                            <a href="#" class="text-primary text-decoration-none mx-3"><?php echo $category['category_name']; ?></a>
+                                            <a href="index.php?category=<?php echo urlencode($category['category_name']); ?>" class="text-primary text-decoration-none mx-3"><?php echo $category['category_name']; ?></a>
                                             <?php
                                             setlocale(LC_TIME, 'id_ID');
                                             $publishDate = new DateTime($article['publish_date']);
@@ -200,7 +210,7 @@ if (!$resultArticle) {
                 <div class="d-flex flex-column bg-body-secondary shadow-md py-3">
                     <h1 class="fs-4 fw-semi-bold m-0 mb-3 p-0 px-3">Category List</h1>
                     <?php foreach ($categories as $category) : ?>
-                        <a href="?category=<?php echo urlencode($category['category_name']); ?>" class="list-category text-decoration-none text-dark fs-5 m-0 px-3 py-1"><?php echo $category['category_name']; ?></a>
+                        <a href="?category=<?php echo urlencode($category['category_name']); ?>" class="list-category text-decoration-none text-dark fs-5 m-0 px-3 py-1<?php echo isset($_GET['category']) && $_GET['category'] === $category['category_name'] ? ' list-category-selected' : ''; ?>"><?php echo $category['category_name']; ?></a>
                     <?php endforeach; ?>
                 </div>
             </div>

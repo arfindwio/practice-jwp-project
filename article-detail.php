@@ -123,10 +123,12 @@ if ($resultArticleDetail->num_rows > 0) {
         <!-- Main Section Start -->
         <section class="container mt-4">
             <!-- Breadcrumb Section Start -->
-            <div class="d-flex align-items-center fs-5 mb-4">
-                <img src="./src/image/icon-home.svg" alt="icon home" style="width: 25px;">
-                <a href="index.php" class="text-decoration-none text-secondary fw-bold p-0 m-0 ms-2">Home </a>
-                <p href="index.php" class="text-decoration-none text-secondary p-0 m-0 ms-2"><span class="fw-bold">></span> Detail Article</p>
+            <div class="d-flex fs-5 mb-4">
+                <a href="index.php" class="d-flex text-decoration-none text-secondary fw-bold p-0 m-0">
+                    <img src="./src/image/icon-home.svg" alt="icon home" style="width: 25px;">
+                    <p class="m-0 p-0 ms-2">Home </p>
+                </a>
+                <p class="text-decoration-none text-secondary p-0 m-0 ms-2"><span class="fw-bold">></span> Detail Article</p>
             </div>
             <!-- Breadcrumb Section End -->
 
@@ -137,14 +139,12 @@ if ($resultArticleDetail->num_rows > 0) {
                         <div class="d-flex flex-column align-items-center text">
                             <h1 class="text-center fw-bold fs-1 m-0 mb-4 p-0 "><?php echo strtoupper($articleDetail['title']); ?></h1>
                             <p class="text-dark fw-bold m-0 mb-2 p-0"><?php echo $admin['name'] ?> - <span class="fw-semibold text-warning">ArfinMagz</span></p>
-                            <p class="text-body-tertiary fw-semibold m-0 mb-3 p-0">
-                                <a href="#" class="text-primary text-decoration-none me-2"><?php echo $category['category_name'] ?></a>
-                                <?php
-                                echo strftime('%e %B %Y', $publishDate->getTimestamp());
-                                ?>
-                            </p>
-                            <div class="col-2 col-md-3 mb-4 mx-md-0">
-                                <img src="./src/image/<?php echo $articleDetail['image']; ?>" alt="image-news" class="img-fluid">
+                            <div class="d-block d-md-flex text-center text-body-tertiary fw-semibold m-0 mb-3 p-0">
+                                <a href="index.php?category=<?php echo urlencode($category['category_name']); ?>" class="text-primary text-decoration-none me-md-2 m-0 p-0"><?php echo $category['category_name'] ?></a>
+                                <p class="m-0 p-0"><?php echo strftime('%e %B %Y', $publishDate->getTimestamp()); ?></p>
+                            </div>
+                            <div class="d-flex col-10 col-md-5 mb-4 mx-md-0">
+                                <img src="./src/image/<?php echo $articleDetail['image']; ?>" alt="image-news" class="w-100">
                             </div>
                         </div>
                         <p class="fs-5 m-0 pt-1"><?php echo $articleDetail['content']; ?></p>
