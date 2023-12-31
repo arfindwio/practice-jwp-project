@@ -123,13 +123,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             tr:nth-child(even) {
                 background-color: #dddddd;
             }
+
+            .text-back {
+                background-color: rgba(248, 249, 250, 1);
+                color: black !important;
+            }
+
+            .text-back:hover {
+                background-color: rgba(211, 212, 213, 1);
+                color: black !important;
+            }
+
+            .text-submit {
+                background-color: rgba(13, 109, 253, 1);
+            }
+
+            .text-submit:hover {
+                background-color: rgba(13, 109, 253, .7);
+            }
         </style>
     </head>
 
     <body>
         <!-- Sidebar Section Start -->
         <div class="col-2 bg-dark" style="position: fixed;height: 100vh;">
-            <a href="index.php" class="d-flex justify-content-center align-items-center text-decoration-none text-white text-center py-4 p-0 m-0">
+            <a href="dashboard.php" class="d-flex justify-content-center align-items-center text-decoration-none text-white text-center py-4 p-0 m-0">
                 <img src="../src/image/logo-magz.svg" alt="logo" style="width: 50px;">
                 <span class="fs-2 fw-bold ms-2">ArfinMagz</span>
             </a>
@@ -206,7 +224,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                                 </div>
                             </div>
 
-                            <input type="submit" value="Update" class="bg-primary text-white rounded-3 border border-1 border-white py-2 px-5">
+                            <a class="text-back text-decoration-none border border-2 border-subtle fw-semibold rounded-3 py-2 px-5" href="manage-article.php">Back</a>
+                            <input type="submit" value="Update" class="text-submit text-white rounded-3 border border-1 border-white py-2 px-5">
                         </form>
                     </div>
                     </form>
