@@ -56,7 +56,7 @@ if ($articlesResult && $articlesResult->num_rows > 0) {
 <body>
     <!-- Sidebar Section Start -->
     <div class="col-2 bg-dark" style="position: fixed;height: 100vh;">
-        <a href="index.php" class="d-flex justify-content-center align-items-center text-decoration-none text-white text-center py-4 p-0 m-0">
+        <a href="dashboard.php" class="d-flex justify-content-center align-items-center text-decoration-none text-white text-center py-4 p-0 m-0">
             <img src="../src/image/logo-magz.svg" alt="logo" style="width: 50px;">
             <span class="fs-2 fw-bold ms-2">ArfinMagz</span>
         </a>
@@ -97,18 +97,22 @@ if ($articlesResult && $articlesResult->num_rows > 0) {
             <table style="width: 100%;">
                 <tr>
                     <th class="fw-bold fs-5">No</th>
+                    <th class="fw-bold fs-5">Image</th>
                     <th class="fw-bold fs-5">Article Title</th>
                     <th class="fw-bold fs-5">Article Content</th>
+                    <th class="fw-bold fs-5">Status</th>
                     <th class="fw-bold fs-5">Publish Date</th>
                     <th class="fw-bold fs-5">Action</th>
                 </tr>
                 <?php foreach ($articles as $index => $article) : ?>
                     <tr>
-                        <td><?php echo $index + 1; ?></td>
-                        <td class="col-3"><?php echo $article['title']; ?></td>
-                        <td class="col-5"><?php echo $article['content']; ?></td>
-                        <td><?php echo (isset($article['publish_date'])) ? $article['publish_date'] : "null"; ?></td>
-                        <td class="d-flex flex-nowrap">
+                        <td style="font-size: 16px;"><?php echo $index + 1; ?></td>
+                        <td class="text-center"><img src="../src/image/<?php echo $article['image']; ?>" alt="image article" style="width: 120px; height: 100px;object-fit: fill;"></td>
+                        <td class="col-2 text-truncate" style="max-width: 0px; font-size: 16px;"><?php echo $article['title']; ?></td>
+                        <td class="col-3 text-truncate" style="max-width: 0px; font-size: 16px;"><?php echo $article['content']; ?></td>
+                        <td class="col-1" style="font-size: 16px;"><?php echo (isset($article['publish_date'])) ? "Publish" : "Draft"; ?></td>
+                        <td style="font-size: 16px;"><?php echo (isset($article['publish_date'])) ? $article['publish_date'] : "null"; ?></td>
+                        <td class="d-flex flex-nowrap py-5" style="font-size: 16px;">
                             <a href="./edit-article.php?id=<?php echo $article['id'] ?>" class="fs-5 d-inline-block text-decoration-none text-white bg-warning bg-opacity-75 rounded-4 px-4 py-2 me-2">
                                 <div class="d-flex align-items-center justify-content-center">
                                     <img src="../src/image/icon-edit.svg" alt="icon edit" class="p-1" style="width: 30px; filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(227deg) brightness(111%) contrast(101%);">
