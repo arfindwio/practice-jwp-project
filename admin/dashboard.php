@@ -83,22 +83,34 @@ if ($categoryCountResult) {
         <!-- Navbar Section Start -->
 
         <!-- Main Section Start -->
-        <div class="container-fluid d-flex px-5 pt-5">
-            <div class="col-4 px-2">
-                <div class="bg-success-subtle d-flex align-items-center rounded-3 py-4 px-4">
-                    <img src="../src/image/icon-category.svg" alt="logo article" class="object-fit-cover" style="width: 30%;">
-                    <div class="ps-4 p-0 m-0">
-                        <p class="fs-3 fw-bold p-0 m-0"><?php echo $categoryCount; ?></p>
-                        <p class="fs-3 fw-bold p-0 m-0">Category</p>
-                    </div>
+        <div class="container-fluid d-flex flex-column px-5 pt-5">
+
+            <!-- Breadcrumb Section Start -->
+            <div class="d-flex fs-5 mb-4">
+                <div class="d-flex text-decoration-none text-secondary p-0 m-0">
+                    <img src="../src/image/icon-home.svg" alt="icon home" style="width: 25px;">
+                    <p class="m-0 p-0 ms-2">Dashboard </p>
                 </div>
             </div>
-            <div class="col-4 px-2">
-                <div class="bg-success-subtle d-flex align-items-center rounded-3 py-4 px-4">
-                    <img src="../src/image/icon-article.svg" alt="logo article" class="object-fit-cover" style="width: 30%;">
-                    <div class="ps-2 p-0 m-0">
-                        <p class="fs-3 fw-bold p-0 m-0"><?php echo $articleCount; ?></p>
-                        <p class="fs-3 fw-bold p-0 m-0">Articles</p>
+            <!-- Breadcrumb Section End -->
+
+            <div class="row">
+                <div class="col-4 px-2">
+                    <div class="bg-success-subtle d-flex align-items-center rounded-3 py-4 px-4">
+                        <img src="../src/image/icon-category.svg" alt="logo article" class="object-fit-cover" style="width: 30%;">
+                        <div class="ps-4 p-0 m-0">
+                            <p class="fs-3 fw-bold p-0 m-0"><?php echo $categoryCount; ?></p>
+                            <p class="fs-3 fw-bold p-0 m-0">Category</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4 px-2">
+                    <div class="bg-success-subtle d-flex align-items-center rounded-3 py-4 px-4">
+                        <img src="../src/image/icon-article.svg" alt="logo article" class="object-fit-cover" style="width: 30%;">
+                        <div class="ps-2 p-0 m-0">
+                            <p class="fs-3 fw-bold p-0 m-0"><?php echo $articleCount; ?></p>
+                            <p class="fs-3 fw-bold p-0 m-0">Articles</p>
+                        </div>
                     </div>
                 </div>
             </div>

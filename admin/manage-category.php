@@ -86,6 +86,16 @@ if ($categoriesResult && $categoriesResult->num_rows > 0) {
 
         <!-- Main Section Start -->
         <div class="container-fluid px-5 pt-5">
+
+            <!-- Breadcrumb Section Start -->
+            <div class="d-flex fs-5 mb-4">
+                <div class="d-flex text-decoration-none text-secondary p-0 m-0">
+                    <img src="../src/image/icon-home.svg" alt="icon home" style="width: 25px;">
+                    <p class="m-0 p-0 ms-2">Manage Category</p>
+                </div>
+            </div>
+            <!-- Breadcrumb Section End -->
+
             <a href="./create-category.php" class="d-inline-block fs-5 text-decoration-none bg-success bg-opacity-75 text-white rounded-4 px-4 py-2 mb-3">
                 <div class="d-flex align-items-center justify-content-center">
                     <img src="../src/image/icon-create.svg" alt="create data" class="p-1" style="width: 25px; filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(227deg) brightness(111%) contrast(101%);">
@@ -116,30 +126,29 @@ if ($categoriesResult && $categoriesResult->num_rows > 0) {
                             </div>
                         </td>
                     </tr>
+                    <!-- Delete Modal Section Start-->
+                    <div class="modal fade" id="deleteModal<?php echo $category['id_category']; ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Delete Category</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to delete the category "<?php echo $category['category_name']; ?>"?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <a href="./delete-category.php?id=<?php echo $category['id_category'] ?>" class="btn btn-danger">Delete</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Delete Modal Section Start -->
                 <?php endforeach; ?>
             </table>
         </div>
         <!-- Main Section End -->
-
-        <!-- Delete Modal Section Start-->
-        <div class="modal fade" id="deleteModal<?php echo $category['id_category']; ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Delete Category</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        Are you sure you want to delete the category "<?php echo $category['category_name']; ?>"?
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <a href="./delete-category.php?id=<?php echo $category['id_category'] ?>" class="btn btn-danger">Delete</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Delete Modal Section Start -->
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>

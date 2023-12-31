@@ -177,9 +177,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
             <!-- Main Section Start -->
             <div class="container-fluid px-5 pt-5">
+
+                <!-- Breadcrumb Section Start -->
+                <div class="d-flex fs-5 mb-4">
+                    <a href="manage-article.php" class="d-flex text-decoration-none text-secondary fw-bold p-0 m-0">
+                        <img src="../src/image/icon-home.svg" alt="icon home" style="width: 25px;">
+                        <p class="m-0 p-0 ms-2">Manage Article </p>
+                    </a>
+                    <p class="text-decoration-none text-secondary p-0 m-0 ms-2"><span class="fw-bold">></span> Edit Article</p>
+                </div>
+                <!-- Breadcrumb Section End -->
+
                 <div class="border border-2 rounded-2 p-5 m-0">
                     <h2 class="fs-2 mb-4">Edit Article</h2>
-
                     <div>
                         <form method="post" action="edit-article.php" action="edit-article.php?id=<?php echo $articleData['id']; ?>" enctype="multipart/form-data">
                             <input type="hidden" name="article_id" value="<?php echo $articleData['id']; ?>">
