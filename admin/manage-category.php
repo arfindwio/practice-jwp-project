@@ -56,7 +56,7 @@ if ($categoriesResult && $categoriesResult->num_rows > 0) {
 <body>
     <!-- Sidebar Section Start -->
     <div class="col-2 bg-dark" style="position: fixed;height: 100vh;">
-        <a href="index.php" class="d-flex justify-content-center align-items-center text-decoration-none text-white text-center py-4 p-0 m-0">
+        <a href="dashboard.php" class="d-flex justify-content-center align-items-center text-decoration-none text-white text-center py-4 p-0 m-0">
             <img src="../src/image/logo-magz.svg" alt="logo" style="width: 50px;">
             <span class="fs-2 fw-bold ms-2">ArfinMagz</span>
         </a>
@@ -101,12 +101,12 @@ if ($categoriesResult && $categoriesResult->num_rows > 0) {
                 </tr>
                 <?php foreach ($categories as $index => $category) : ?>
                     <tr>
-                        <td style="col-2"><?php echo $index + 1; ?></td>
-                        <td class="col-8"><?php echo $category['category_name']; ?></td>
+                        <td style="font-size: 16px;"><?php echo $index + 1; ?></td>
+                        <td class="col-8" style="font-size: 16px;"><?php echo $category['category_name']; ?></td>
                         <td class="d-flex flex-nowrap">
                             <a href="./edit-category.php?id=<?php echo $category['id_category'] ?>" class="fs-5 d-inline-block text-decoration-none text-white bg-warning bg-opacity-75 rounded-4 px-4 py-2 me-2">
                                 <div class="d-flex align-items-center justify-content-center">
-                                    <img src="../src/image/icon-edit.svg" alt="icon edit" class="p-1" style="width: 30px; filter: invert(100%) sepia(100%) saturate(0%) brightness(111%) contrast(101%);">
+                                    <img src="../src/image/icon-edit.svg" alt="icon edit" class="p-1" style="width: 30px; filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(227deg) brightness(111%) contrast(101%);">
                                     <p class="p-0 m-0 ms-1">Edit</p>
                                 </div>
                             </a>

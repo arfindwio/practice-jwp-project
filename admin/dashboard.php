@@ -54,7 +54,7 @@ if ($categoryCountResult) {
 <body>
     <!-- Sidebar Section Start -->
     <div class="col-2 bg-dark" style="position: fixed;height: 100vh;">
-        <a href="index.php" class="d-flex justify-content-center align-items-center text-decoration-none text-white text-center py-4 p-0 m-0">
+        <a href="dashboard.php" class="d-flex justify-content-center align-items-center text-decoration-none text-white text-center py-4 p-0 m-0">
             <img src="../src/image/logo-magz.svg" alt="logo" style="width: 50px;">
             <span class="fs-2 fw-bold ms-2">ArfinMagz</span>
         </a>
@@ -86,7 +86,7 @@ if ($categoryCountResult) {
         <div class="container-fluid d-flex px-5 pt-5">
             <div class="col-4 px-2">
                 <div class="bg-success-subtle d-flex align-items-center rounded-3 py-4 px-4">
-                    <img src="../src/image/icon-category.svg" alt="logo article" class="object-fit-cover" style="width: 40%;">
+                    <img src="../src/image/icon-category.svg" alt="logo article" class="object-fit-cover" style="width: 30%;">
                     <div class="ps-4 p-0 m-0">
                         <p class="fs-3 fw-bold p-0 m-0"><?php echo $categoryCount; ?></p>
                         <p class="fs-3 fw-bold p-0 m-0">Category</p>
@@ -95,7 +95,7 @@ if ($categoryCountResult) {
             </div>
             <div class="col-4 px-2">
                 <div class="bg-success-subtle d-flex align-items-center rounded-3 py-4 px-4">
-                    <img src="../src/image/icon-article.svg" alt="logo article" class="object-fit-cover" style="width: 40%;">
+                    <img src="../src/image/icon-article.svg" alt="logo article" class="object-fit-cover" style="width: 30%;">
                     <div class="ps-2 p-0 m-0">
                         <p class="fs-3 fw-bold p-0 m-0"><?php echo $articleCount; ?></p>
                         <p class="fs-3 fw-bold p-0 m-0">Articles</p>
