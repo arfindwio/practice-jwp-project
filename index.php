@@ -8,23 +8,43 @@ $searchQuery = isset($_GET['search']) ? $_GET['search'] : '';
 // Handle category filter
 $categoryFilter = isset($_GET['category']) ? $_GET['category'] : '';
 
-// Query to fetch data articles
-$sqlArticle = "SELECT * FROM article";
+// Handle page number
+$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+$limit = 10;
+$offset = ($page - 1) * $limit;
+
+// Query to fetch data articles with pagination
+$sqlArticle = "SELECT * FROM article WHERE status = true"; // Add condition for true status
 
 // Add search filter if a search query is provided
 if (!empty($searchQuery)) {
-    $sqlArticle .= " WHERE title LIKE '%$searchQuery%'";
+    $sqlArticle .= " AND title LIKE '%$searchQuery%'";
 }
 
 // Add category filter if a category is selected
 if (!empty($categoryFilter)) {
-    if (strpos($sqlArticle, 'WHERE') === false) {
-        $sqlArticle .= " WHERE";
-    } else {
-        $sqlArticle .= " AND";
-    }
-    $sqlArticle .= " id_category IN (SELECT id_category FROM category WHERE category_name = '$categoryFilter')";
+    $sqlArticle .= " AND id_category IN (SELECT id_category FROM category WHERE category_name = '$categoryFilter')";
 }
+
+// Calculate total number of records
+$totalRecordsQuery = "SELECT COUNT(*) AS total_records FROM article WHERE status = true"; // Add condition for true status
+
+// Add search filter to the count query
+if (!empty($searchQuery)) {
+    $totalRecordsQuery .= " AND title LIKE '%$searchQuery%'";
+}
+
+// Add category filter to the count query
+if (!empty($categoryFilter)) {
+    $totalRecordsQuery .= " AND id_category IN (SELECT id_category FROM category WHERE category_name = '$categoryFilter')";
+}
+
+$totalRecordsResult = $conn->query($totalRecordsQuery);
+$totalRecords = $totalRecordsResult->fetch_assoc()['total_records'];
+$totalPages = ceil($totalRecords / $limit);
+
+// Add pagination
+$sqlArticle .= " LIMIT $limit OFFSET " . ($page - 1) * $limit;
 
 // Query to fetch categories
 $sqlCategories = "SELECT * FROM category";
@@ -49,7 +69,6 @@ if (!$resultArticle) {
     exit();
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -159,7 +178,7 @@ if (!$resultArticle) {
             <!-- List Category Section End -->
 
             <!-- Article Section Start -->
-            <div class="col-12 col-lg-9">
+            <div class="col-12 col-lg-10">
                 <?php
                 if ($resultArticle->num_rows > 0) {
                     while ($article = $resultArticle->fetch_assoc()) {
@@ -175,8 +194,8 @@ if (!$resultArticle) {
                                 <div class="d-flex justify-content-center justify-content-lg-start col-2 col-lg-3 mb-3 mx-auto mb-lg-0 mx-lg-0">
                                     <img src="./src/image/<?php echo $article['image']; ?>" alt="image-news" class="object-fit-cover">
                                 </div>
-                                <div class="col-12 p-0 m-0 col-lg-9 ps-lg-5 pt-lg-2">
-                                    <h1 class="fw-bold m-0 p-0 mb-lg-3" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 24px;"><?php echo $article['title']; ?></h1>
+                                <div class="col-12 p-0 m-0 col-lg-9 ps-lg-4 pe-lg-1 pt-lg-2">
+                                    <h1 class="fw-bold m-0 p-0 mb-lg-3" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 22px;"><?php echo $article['title']; ?></h1>
                                     <p class=" truncate-lines-2 m-0 mb-3 mb-lg-2 pt-1" style="font-size: 16px;"><?php echo $article['content'] ?></p>
                                     <div class="d-flex align-items-end m-0 p-0 pt-lg-4 pe-lg-3">
                                         <p class="text-body-tertiary fw-semibold m-0 p-0">
@@ -208,7 +227,7 @@ if (!$resultArticle) {
 
 
             <!-- List Category Section Start -->
-            <div class="d-none d-lg-block col-3">
+            <div class="d-none d-lg-block col-2">
                 <div class="d-flex flex-column bg-body-secondary shadow-md py-3">
                     <h1 class="fs-5 fw-semibold m-0 mb-3 p-0 px-3">Category List</h1>
                     <?php foreach ($categories as $category) : ?>
@@ -219,8 +238,22 @@ if (!$resultArticle) {
             <!-- List Category Section End -->
         </div>
     </section>
-
     <!-- Main Section End -->
+
+    <!-- Pagination Section Start -->
+    <div class="d-flex justify-content-center mt-4">
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <?php
+                // Display pagination links
+                for ($i = 1; $i <= $totalPages; $i++) {
+                    echo "<li class='page-item" . ($i == $page ? " active" : "") . "'><a class='page-link' href='index.php?page=$i" . (!empty($searchQuery) ? "&search=$searchQuery" : "") . (!empty($categoryFilter) ? "&category=$categoryFilter" : "") . "'>$i</a></li>";
+                }
+                ?>
+            </ul>
+        </nav>
+    </div>
+    <!-- Pagination Section End -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>
