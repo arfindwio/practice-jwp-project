@@ -7,8 +7,13 @@ if (!isset($_SESSION['id_admin'])) {
     exit();
 }
 
-// Fetch categories
-$categoriesQuery = "SELECT * FROM category";
+// Pagination
+$limit = 10; // Number of categories per page
+$page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1; // Current page, default is 1
+$offset = ($page - 1) * $limit; // Calculate the offset for the SQL query
+
+// Fetch categories with pagination
+$categoriesQuery = "SELECT * FROM category LIMIT $limit OFFSET $offset";
 $categoriesResult = $conn->query($categoriesQuery);
 
 $categories = [];
@@ -17,6 +22,14 @@ if ($categoriesResult && $categoriesResult->num_rows > 0) {
         $categories[] = $row;
     }
 }
+
+// Count total number of categories for pagination
+$totalCategoriesQuery = "SELECT COUNT(*) as total FROM category";
+$totalCategoriesResult = $conn->query($totalCategoriesQuery);
+$totalCategories = $totalCategoriesResult->fetch_assoc()['total'];
+
+// Calculate total number of pages
+$totalPages = ceil($totalCategories / $limit);
 
 ?>
 
@@ -109,9 +122,12 @@ if ($categoriesResult && $categoriesResult->num_rows > 0) {
                     <th class="fw-bold fs-5">Category Name</th>
                     <th class="fw-bold fs-5">Action</th>
                 </tr>
-                <?php foreach ($categories as $index => $category) : ?>
+                <?php
+                $startingIndex = ($page - 1) * $limit + 1;
+                foreach ($categories as $index => $category) :
+                ?>
                     <tr>
-                        <td style="font-size: 16px;"><?php echo $index + 1; ?></td>
+                        <td style="font-size: 16px;"><?php echo $startingIndex + $index; ?></td>
                         <td class="col-8" style="font-size: 16px;"><?php echo $category['category_name']; ?></td>
                         <td class="d-flex flex-nowrap">
                             <a href="./edit-category.php?id=<?php echo $category['id_category'] ?>" class="fs-5 d-inline-block text-decoration-none text-white bg-warning bg-opacity-75 rounded-4 px-4 py-2 me-2">
@@ -149,6 +165,20 @@ if ($categoriesResult && $categoriesResult->num_rows > 0) {
             </table>
         </div>
         <!-- Main Section End -->
+
+        <!-- Pagination Section Start -->
+        <div class="d-flex justify-content-center mt-4">
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <?php for ($i = 1; $i <= $totalPages; $i++) : ?>
+                        <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
+                            <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                        </li>
+                    <?php endfor; ?>
+                </ul>
+            </nav>
+        </div>
+        <!-- Pagination Section End -->
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>
