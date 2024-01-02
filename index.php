@@ -146,16 +146,18 @@ if (!$resultArticle) {
         <!-- Breadcrumb Section End -->
 
         <div class="row">
+
             <!-- List Category Section Start -->
             <div class="col-12 mb-4 d-lg-none mb-lg-0">
                 <div class="d-flex flex-column bg-body-secondary shadow-md rounded-2 py-3">
-                    <h1 class="fs-4 fw-semi-bold m-0 mb-3 p-0 px-3">Category List</h1>
+                    <h1 class="fs-5 fw-semi-bold m-0 mb-3 p-0 px-3">Category List</h1>
                     <?php foreach ($categories as $category) : ?>
-                        <a href="?category=<?php echo urlencode($category['category_name']); ?>" class="list-category text-decoration-none text-dark fs-5 m-0 px-3 py-1"><?php echo $category['category_name']; ?></a>
+                        <a href="index.php?category=<?php echo urlencode($category['category_name']); ?>" class="list-category text-decoration-none text-dark m-0 px-3 py-1<?php echo isset($_GET['category']) && $_GET['category'] === $category['category_name'] ? ' list-category-selected' : ''; ?>" style="font-size: 16px;"><?php echo $category['category_name']; ?></a>
                     <?php endforeach; ?>
                 </div>
             </div>
             <!-- List Category Section End -->
+
             <!-- Article Section Start -->
             <div class="col-12 col-lg-9">
                 <?php
@@ -173,9 +175,9 @@ if (!$resultArticle) {
                                 <div class="d-flex justify-content-center justify-content-lg-start col-2 col-lg-3 mb-3 mx-auto mb-lg-0 mx-lg-0">
                                     <img src="./src/image/<?php echo $article['image']; ?>" alt="image-news" class="object-fit-cover">
                                 </div>
-                                <div class="col-12 p-0 m-0 col-lg-9 ps-lg-5 py-lg-2">
-                                    <h1 class="m-0 p-0 mb-lg-3" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?php echo $article['title']; ?></h1>
-                                    <p class="fs-5  truncate-lines-2 m-0 mb-3 mb-lg-0 pt-1"><?php echo $article['content'] ?></p>
+                                <div class="col-12 p-0 m-0 col-lg-9 ps-lg-5 pt-lg-2">
+                                    <h1 class="fw-bold m-0 p-0 mb-lg-3" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 24px;"><?php echo $article['title']; ?></h1>
+                                    <p class=" truncate-lines-2 m-0 mb-3 mb-lg-2 pt-1" style="font-size: 16px;"><?php echo $article['content'] ?></p>
                                     <div class="d-flex align-items-end m-0 p-0 pt-lg-4 pe-lg-3">
                                         <p class="text-body-tertiary fw-semibold m-0 p-0">
                                             <span class="text-dark fw-bold"><?php echo $admin['name']; ?></span>
@@ -186,7 +188,7 @@ if (!$resultArticle) {
                                             echo strftime('%e %B %Y', $publishDate->getTimestamp());
                                             ?>
                                         </p>
-                                        <a href="article-detail.php?id=<?php echo $article['id']; ?>" class="text-decoration-none text-white bg-primary rounded-1 py-1 px-2 py-lg-2 px-lg-3 ms-auto">Lihat Selengkapnya</a>
+                                        <a href="article-detail.php?id=<?php echo $article['id']; ?>" class="text-decoration-none text-white bg-primary rounded-1 py-1 px-2 px-lg-3 ms-auto">Lihat Selengkapnya</a>
                                     </div>
                                 </div>
                             </div>
@@ -208,9 +210,9 @@ if (!$resultArticle) {
             <!-- List Category Section Start -->
             <div class="d-none d-lg-block col-3">
                 <div class="d-flex flex-column bg-body-secondary shadow-md py-3">
-                    <h1 class="fs-4 fw-semi-bold m-0 mb-3 p-0 px-3">Category List</h1>
+                    <h1 class="fs-5 fw-semibold m-0 mb-3 p-0 px-3">Category List</h1>
                     <?php foreach ($categories as $category) : ?>
-                        <a href="?category=<?php echo urlencode($category['category_name']); ?>" class="list-category text-decoration-none text-dark fs-5 m-0 px-3 py-1<?php echo isset($_GET['category']) && $_GET['category'] === $category['category_name'] ? ' list-category-selected' : ''; ?>"><?php echo $category['category_name']; ?></a>
+                        <a href="index.php?category=<?php echo urlencode($category['category_name']); ?>" class="list-category text-decoration-none text-dark m-0 px-3 py-1<?php echo isset($_GET['category']) && $_GET['category'] === $category['category_name'] ? ' list-category-selected' : ''; ?>" style="font-size: 16px;"><?php echo $category['category_name']; ?></a>
                     <?php endforeach; ?>
                 </div>
             </div>
