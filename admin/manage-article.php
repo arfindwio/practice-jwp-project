@@ -7,8 +7,13 @@ if (!isset($_SESSION['id_admin'])) {
     exit();
 }
 
-// Fetch categories
-$articlesQuery = "SELECT * FROM article";
+// Pagination
+$limit = 10; // Number of articles per page
+$page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1; // Current page, default is 1
+$offset = ($page - 1) * $limit; // Calculate the offset for the SQL query
+
+// Fetch articles with pagination
+$articlesQuery = "SELECT * FROM article LIMIT $limit OFFSET $offset";
 $articlesResult = $conn->query($articlesQuery);
 
 $articles = [];
@@ -18,8 +23,14 @@ if ($articlesResult && $articlesResult->num_rows > 0) {
     }
 }
 
-?>
+// Count total number of articles for pagination
+$totalArticlesQuery = "SELECT COUNT(*) as total FROM article";
+$totalArticlesResult = $conn->query($totalArticlesQuery);
+$totalArticles = $totalArticlesResult->fetch_assoc()['total'];
 
+// Calculate total number of pages
+$totalPages = ceil($totalArticles / $limit);
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -114,9 +125,12 @@ if ($articlesResult && $articlesResult->num_rows > 0) {
                     <th class="fw-bold fs-5">Publish Date</th>
                     <th class="fw-bold fs-5">Action</th>
                 </tr>
-                <?php foreach ($articles as $index => $article) : ?>
+                <?php
+                $startingIndex = ($page - 1) * $limit + 1;
+                foreach ($articles as $article) :
+                ?>
                     <tr>
-                        <td style="font-size: 16px;"><?php echo $index + 1; ?></td>
+                        <td style="font-size: 16px;"><?php echo $startingIndex++; ?></td>
                         <td class="text-center"><img src="../src/image/<?php echo $article['image']; ?>" alt="image article" style="width: 120px; height: 100px;object-fit: fill;"></td>
                         <td class="col-2 text-truncate" style="max-width: 0px; font-size: 16px;"><?php echo $article['title']; ?></td>
                         <td class="col-3 text-truncate" style="max-width: 0px; font-size: 16px;"><?php echo $article['content']; ?></td>
@@ -159,9 +173,19 @@ if ($articlesResult && $articlesResult->num_rows > 0) {
         </div>
         <!-- Main Section End -->
 
-
-
-
+        <!-- Pagination Section Start -->
+        <div class="d-flex justify-content-center mt-4">
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <?php for ($i = 1; $i <= $totalPages; $i++) : ?>
+                        <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
+                            <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                        </li>
+                    <?php endfor; ?>
+                </ul>
+            </nav>
+        </div>
+        <!-- Pagination Section End -->
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>
