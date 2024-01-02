@@ -64,7 +64,15 @@ function updateArticle($conn, $articleId, $title, $content, $image, $categoryId,
 
 function uploadImage()
 {
+    $allowedExtensions = array('jpg', 'jpeg', 'png', 'svg');
+
     $imageFileType = strtolower(pathinfo($_FILES["image"]["name"], PATHINFO_EXTENSION));
+
+    if (!in_array($imageFileType, $allowedExtensions)) {
+        header("Location: edit-article.php?id=" . $_POST['article_id']);
+        exit();
+    }
+
     $hash = hash('sha256', uniqid(mt_rand(), true));
     $targetFile = $hash . '.' . $imageFileType;
 
@@ -72,7 +80,8 @@ function uploadImage()
         return $targetFile;
     }
 
-    return null;
+    header("Location: create-article.php");
+    exit();
 }
 
 if (!isset($_SESSION['id_admin'])) {
@@ -261,6 +270,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($_FILES['image']['name'])) {
         // If a new image is uploaded, use the uploaded image
         $image = uploadImage();
+
+        if ($image === null) {
+            if (isset($_GET['error']) && $_GET['error'] === 'InvalidFileExtension') {
+                header("Location: edit-article.php?id=" . $_POST['article_id']);
+                exit();
+            } elseif (isset($_GET['error']) && $_GET['error'] === 'FailedToUploadImage') {
+                header("Location: edit-article.php?id=" . $_POST['article_id']);
+                exit();
+            } else {
+                header("Location: edit-article.php?id=" . $_POST['article_id']);
+                exit();
+            }
+        }
     } else {
         // If no new image is uploaded, use the existing image URL
         $image = cleanInput($conn, $_POST['existing_image']);

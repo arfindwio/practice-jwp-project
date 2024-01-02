@@ -57,7 +57,15 @@ function insertArticle($conn, $title, $content, $image, $categoryId, $status, $u
 
 function uploadImage()
 {
+    $allowedExtensions = array('jpg', 'jpeg', 'png', 'svg');
+
     $imageFileType = strtolower(pathinfo($_FILES["image"]["name"], PATHINFO_EXTENSION));
+
+    if (!in_array($imageFileType, $allowedExtensions)) {
+        header("Location: create-article.php");
+        exit();
+    }
+
     $hash = hash('sha256', uniqid(mt_rand(), true));
     $targetFile = $hash . '.' . $imageFileType;
 
@@ -65,8 +73,10 @@ function uploadImage()
         return $targetFile;
     }
 
-    return null;
+    header("Location: create-article.php");
+    exit();
 }
+
 
 
 if (!isset($_SESSION['id_admin'])) {
@@ -81,6 +91,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $userId = $_SESSION['id_admin'];
 
     $image = uploadImage();
+
+    if ($image === null) {
+        if (isset($_GET['error']) && $_GET['error'] === 'InvalidFileExtension') {
+            header("Location: create-article.php");
+            exit();
+        } elseif (isset($_GET['error']) && $_GET['error'] === 'FailedToUploadImage') {
+            header("Location: create-article.php");
+            exit();
+        } else {
+            header("Location: create-article.php");
+            exit();
+        }
+    }
 
     insertArticle($conn, $title, $content, $image, $categoryId, $status, $userId);
 
@@ -183,6 +206,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <!-- Breadcrumb Section End -->
 
+            <!-- Create Article Section Start -->
             <div class="border border-2 rounded-2 p-5 m-0">
                 <h2 class="fs-2 mb-4">Input Article</h2>
 
@@ -198,7 +222,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                         <div class="d-flex flex-column mb-3">
                             <label for="image" class="fs-4">Image</label>
-                            <input type="file" id="image" name="image" accept="image/*" class="form-control" style="width: 50%">
+                            <input type="file" id="image" name="image" accept="image/*" class="form-control" style="width: 50%" required>
                         </div>
                         <div class="d-flex flex-column mb-3">
                             <label for="category_id" class="fs-4">Category</label>
@@ -230,6 +254,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </form>
                 </div>
             </div>
+            <!-- Create Article Section Start -->
+
         </div>
         <!-- Main Section End -->
     </div>
