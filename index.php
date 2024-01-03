@@ -9,7 +9,7 @@ $searchQuery = isset($_GET['search']) ? $_GET['search'] : '';
 $categoryFilter = isset($_GET['category']) ? $_GET['category'] : '';
 
 // Handle page number
-$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+$page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $limit = 10;
 $offset = ($page - 1) * $limit;
 
@@ -245,15 +245,36 @@ if (!$resultArticle) {
         <nav aria-label="Page navigation">
             <ul class="pagination">
                 <?php
-                // Display pagination links
-                for ($i = 1; $i <= $totalPages; $i++) {
+                // Display link to the first page
+                if ($page > 1) {
+                    echo "<li class='page-item'><a class='page-link' href='index.php?page=1" . (!empty($searchQuery) ? "&search=$searchQuery" : "") . (!empty($categoryFilter) ? "&category=$categoryFilter" : "") . "'>First</a></li>";
+                }
+
+                // Display ellipsis or link to the previous page if applicable
+                if ($page > 5) {
+                    echo "<li class='page-item disabled'><span class='page-link'>...</span></li>";
+                }
+
+                for ($i = max(1, $page - 3); $i <= min($page + 3, $totalPages); $i++) {
                     echo "<li class='page-item" . ($i == $page ? " active" : "") . "'><a class='page-link' href='index.php?page=$i" . (!empty($searchQuery) ? "&search=$searchQuery" : "") . (!empty($categoryFilter) ? "&category=$categoryFilter" : "") . "'>$i</a></li>";
+                }
+
+                // Display ellipsis or link to the next page if applicable
+                if ($page < $totalPages - 4) {
+                    echo "<li class='page-item disabled'><span class='page-link'>...</span></li>";
+                }
+
+                // Display link to the last page
+                if ($page < $totalPages) {
+                    echo "<li class='page-item'><a class='page-link' href='index.php?page=$totalPages" . (!empty($searchQuery) ? "&search=$searchQuery" : "") . (!empty($categoryFilter) ? "&category=$categoryFilter" : "") . "'>Last</a></li>";
                 }
                 ?>
             </ul>
         </nav>
     </div>
     <!-- Pagination Section End -->
+
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>

@@ -177,15 +177,36 @@ $totalPages = ceil($totalArticles / $limit);
         <div class="d-flex justify-content-center mt-4">
             <nav aria-label="Page navigation">
                 <ul class="pagination">
-                    <?php for ($i = 1; $i <= $totalPages; $i++) : ?>
-                        <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
-                            <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
-                        </li>
-                    <?php endfor; ?>
+                    <?php
+                    // Display link to the first page
+                    if ($page > 1) {
+                        echo "<li class='page-item'><a class='page-link' href='manage-article.php?page=1'>First</a></li>";
+                    }
+
+                    // Display ellipsis or link to the previous page if applicable
+                    if ($page > 5) {
+                        echo "<li class='page-item disabled'><span class='page-link'>...</span></li>";
+                    }
+
+                    for ($i = max(1, $page - 3); $i <= min($page + 3, $totalPages); $i++) {
+                        echo "<li class='page-item" . ($i == $page ? " active" : "") . "'><a class='page-link' href='manage-article.php?page=$i'>$i</a></li>";
+                    }
+
+                    // Display ellipsis or link to the next page if applicable
+                    if ($page < $totalPages - 4) {
+                        echo "<li class='page-item disabled'><span class='page-link'>...</span></li>";
+                    }
+
+                    // Display link to the last page
+                    if ($page < $totalPages) {
+                        echo "<li class='page-item'><a class='page-link' href='manage-article.php?page=$totalPages'>Last</a></li>";
+                    }
+                    ?>
                 </ul>
             </nav>
         </div>
         <!-- Pagination Section End -->
+
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>
