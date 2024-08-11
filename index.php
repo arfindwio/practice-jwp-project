@@ -216,7 +216,7 @@ if (!$resultArticle) {
                     }
                 } else {
                     ?>
-                    <div class="border border-2 border-light-subtle text-center">
+                    <div class="border border-2 border-light-subtle text-center p-0">
                         <h1 class="fs-3 m-0 py-3">There are currently no articles to display.</h1>
                     </div>
                 <?php
